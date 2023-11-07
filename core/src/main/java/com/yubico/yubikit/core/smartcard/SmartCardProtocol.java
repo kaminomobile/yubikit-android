@@ -195,7 +195,7 @@ public class SmartCardProtocol implements Closeable {
             throw new IllegalArgumentException("Le must be between 0 and " + SHORT_APDU_MAX_CHUNK);
         }
 
-        ByteBuffer buf = ByteBuffer.allocate(4 + (length > 0 ? 1 : 0) + length + (le > 0 ? 1 : 0))
+        ByteBuffer buf = ByteBuffer.allocate(4 + (length > 0 ? 1 : 0) + length + 1)
                 .put(cla)
                 .put(ins)
                 .put(p1)
@@ -203,14 +203,14 @@ public class SmartCardProtocol implements Closeable {
         if (length > 0) {
             buf.put((byte) length).put(data, offset, length);
         }
-        if (le > 0) {
-            buf.put((byte) le);
-        }
+
+        buf.put((byte) le);
+
         return buf.array();
     }
 
     private static byte[] encodeExtendedApdu(byte cla, byte ins, byte p1, byte p2, byte[] data, int le) {
-        ByteBuffer buf = ByteBuffer.allocate(5 + (data.length > 0 ? 2 : 0) + data.length + (le > 0 ? 2 : 0))
+        ByteBuffer buf = ByteBuffer.allocate(5 + (data.length > 0 ? 2 : 0) + data.length + 2)
                 .put(cla)
                 .put(ins)
                 .put(p1)
@@ -219,9 +219,9 @@ public class SmartCardProtocol implements Closeable {
         if (data.length > 0) {
             buf.putShort((short) data.length).put(data);
         }
-        if (le > 0) {
-            buf.putShort((short) le);
-        }
+
+        buf.putShort((short) le);
+
         return buf.array();
     }
 }
